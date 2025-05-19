@@ -313,6 +313,7 @@ function calculateFine() {
   if (document.getElementById("fraud").checked) {
     const amount = parseInt(document.getElementById("fraudCount").value) || 5;
     fine += amount * 10000;
+    if ( isManual ) time += 10;
     selectedCharges.push(`詐欺罪（${amount}万）`);
   }
   if (document.getElementById("obstructionOfficialDuties").checked) {
@@ -321,7 +322,7 @@ function calculateFine() {
     selectedCharges.push("公務執行妨害");
   }
   if (document.getElementById("assault").checked) {
-    fine += 100000;
+    fine += 200000;
     if (isManual) time += 10;
     selectedCharges.push("暴行罪");
   }
