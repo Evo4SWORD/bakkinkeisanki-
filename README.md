@@ -44,7 +44,7 @@
     <label><input type="checkbox" id="theft"> 軽窃盗罪（10万・10分）</label><br>
     <label><input type="checkbox" id="pettyRobberyAttempt"> 軽強盗未遂（15万・なし）</label><br>
     <label><input type="checkbox" id="pettyRobbery"> 軽強盗罪（30万・なし）</label><br>
-    <label><input type="checkbox" id="fraud"> 詐欺罪(5～50万・10分)</label><br>
+    <label><input type="checkbox" id="fraud"> 詐欺罪 (5～50万・10分)</label><br>
 
     <div id="fraudCountContainer" class="input-box" style="display: none;">
       詐欺罰金額※5～50万まで:
