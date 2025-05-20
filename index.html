@@ -33,7 +33,7 @@
 <div id="options" style="display: none;">
   <!-- 保釈金 -->
   <fieldset>
-    <legend>保釈</legend>
+    <legend>保釈金制度</legend>
     <label><input type="checkbox" id="bailOption"> 保釈金支払い（罰金の2倍を支払う）※軽犯罪のみ適用可</label>
   </fieldset>
 
@@ -81,7 +81,7 @@
 
   <!-- 薬 -->
   <fieldset>
-    <legend>薬</legend>
+    <legend>薬関連</legend>
     <div class="item-row">
       <label><input type="checkbox" id="illegalRawDrug" onchange="toggleInput('rawDrugCount')"> 違法薬物原材料所持（1個 1万・固定20分）※100個まで</label>
       <input type="number" id="rawDrugCount" value="0" min="0" style="display:none;" max="100">
