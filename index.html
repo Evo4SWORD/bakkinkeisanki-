@@ -28,12 +28,13 @@
 <button onclick="selectCrime('飛行場襲撃', this)">飛行場襲撃</button>
 <button onclick="selectCrime('アーティファクト強盗', this)">アーティファクト強盗</button>
 <button onclick="selectCrime('パシフィック銀行強盗', this)">パシフィック銀行強盗</button>
+<button onclick="selectCrime('ファストヘイスト', this)">ファストヘイスト</button>
 <button onclick="showAllCharges(this)">その他</button>
 
 <div id="options" style="display: none;">
   <!-- 保釈金 -->
   <fieldset>
-    <legend>保釈金制度</legend>
+    <legend>保釈</legend>
     <label><input type="checkbox" id="bailOption"> 保釈金支払い（罰金の2倍を支払う）※軽犯罪のみ適用可</label>
   </fieldset>
 
@@ -44,14 +45,14 @@
     <label><input type="checkbox" id="theft"> 軽窃盗罪（10万・10分）</label><br>
     <label><input type="checkbox" id="pettyRobberyAttempt"> 軽強盗未遂（15万・なし）</label><br>
     <label><input type="checkbox" id="pettyRobbery"> 軽強盗罪（30万・なし）</label><br>
-    <label><input type="checkbox" id="fraud"> 詐欺罪（5〜50万・10分)</label><br>
+    <label><input type="checkbox" id="fraud"> 詐欺罪</label><br>
 
     <div id="fraudCountContainer" class="input-box" style="display: none;">
       詐欺罰金額※5～50万まで:
       <input type="number" id="fraudCount" value="5" min="5" max="50" step="1">
     </div>
     <label><input type="checkbox" id="obstructionOfficialDuties"> 公務執行妨害※逃亡・職務質問放棄含む（10万・10分）</label><br>
-    <label><input type="checkbox" id="assault"> 暴行罪（20万・10分）</label><br>
+    <label><input type="checkbox" id="assault"> 暴行罪（10万・10分）</label><br>
     <label><input type="checkbox" id="noId"> ID・ライセンス不携帯（10万・なし）</label><br>
   </fieldset>
 
@@ -81,7 +82,7 @@
 
   <!-- 薬 -->
   <fieldset>
-    <legend>薬関連</legend>
+    <legend>薬</legend>
     <div class="item-row">
       <label><input type="checkbox" id="illegalRawDrug" onchange="toggleInput('rawDrugCount')"> 違法薬物原材料所持（1個 1万・固定20分）※100個まで</label>
       <input type="number" id="rawDrugCount" value="0" min="0" style="display:none;" max="100">
@@ -104,17 +105,19 @@
 let selectedCrime = null;
 
 const crimeMappings = {
-  "コンビニ強盗": ["pettyRobbery", "gunLaw","obstructionOfficialDuties","npcMurder"],
-  "家強盗": ["pettyRobbery", "obstructionOfficialDuties"],
-  "フリーカ銀行強盗": ["aggravatedRobbery", "obstructionOfficialDuties"],
-  "宝石強盗": ["aggravatedRobbery", "obstructionOfficialDuties"],
+  "コンビニ強盗": ["pettyRobbery", "gunLaw","obstructionOfficialDuties","kidnap","npcMurder"],
+  "家強盗": ["pettyRobbery","gunLaw","obstructionOfficialDuties"],
+  "フリーカ銀行強盗": ["aggravatedRobbery","gunLaw","obstructionOfficialDuties","kidnap"],
+  "宝石強盗": ["aggravatedRobbery","gunLaw","obstructionOfficialDuties","kidnap"],
   "軍事物資強盗": ["aggravatedRobbery", "gunLaw","obstructionOfficialDuties","npcMurder"],
-  "パレト銀行強盗": ["armedRobbery", "obstructionOfficialDuties"],
-  "客船強盗": ["armedRobbery", "gunLaw","obstructionOfficialDuties","npcMurder"],
-  "飛行場襲撃": ["firstDegreeRobbery", "gunLaw","npcMurder","obstructionOfficialDuties"],
-  "アーティファクト強盗": ["firstDegreeRobbery", "gunLaw","obstructionOfficialDuties","npcMurder"],
-  "パシフィック銀行強盗": ["firstDegreeRobbery", "gunLaw","obstructionOfficialDuties"]
+  "パレト銀行強盗": ["armedRobbery","gunLaw","obstructionOfficialDuties","playerMurder"],
+  "客船強盗": ["armedRobbery", "gunLaw","obstructionOfficialDuties","npcMurder","playerMurder"],
+  "飛行場襲撃": ["firstDegreeRobbery", "gunLaw","npcMurder","obstructionOfficialDuties","playerMurder"],
+  "アーティファクト強盗": ["firstDegreeRobbery", "gunLaw","obstructionOfficialDuties","npcMurder","playerMurder"],
+  "パシフィック銀行強盗": ["firstDegreeRobbery", "gunLaw","obstructionOfficialDuties","playerMurder"],
+  "ファストヘイスト": ["firstDegreeRobbery", "gunLaw","obstructionOfficialDuties","playerMurder"]
 };
+
 
 const fixedTimeByCrime = {
   "コンビニ強盗": 20,
@@ -126,7 +129,8 @@ const fixedTimeByCrime = {
   "客船強盗": 40,
   "飛行場襲撃": 60,
   "アーティファクト強盗": 60,
-  "パシフィック銀行強盗": 60
+  "パシフィック銀行強盗": 60,
+  "ファストヘイスト": 60,
 };
 
 function selectCrime(crime, btn) {
@@ -313,7 +317,6 @@ function calculateFine() {
   if (document.getElementById("fraud").checked) {
     const amount = parseInt(document.getElementById("fraudCount").value) || 5;
     fine += amount * 10000;
-    if ( isManual ) time += 10;
     selectedCharges.push(`詐欺罪（${amount}万）`);
   }
   if (document.getElementById("obstructionOfficialDuties").checked) {
@@ -322,7 +325,7 @@ function calculateFine() {
     selectedCharges.push("公務執行妨害");
   }
   if (document.getElementById("assault").checked) {
-    fine += 200000;
+    fine += 100000;
     if (isManual) time += 10;
     selectedCharges.push("暴行罪");
   }
